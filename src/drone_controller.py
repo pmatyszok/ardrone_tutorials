@@ -15,7 +15,7 @@ import rospy
 from geometry_msgs.msg import Twist  	 # for sending commands to the drone
 from std_msgs.msg import Empty       	 # for land/takeoff/emergency
 from ardrone_autonomy.msg import Navdata # for receiving navdata feedback
-
+from ardrone_autonomy.srv import FlightAnim
 # An enumeration of Drone Statuses
 from drone_status import DroneStatus
 
@@ -25,10 +25,12 @@ COMMAND_PERIOD = 100 #ms
 
 
 class BasicDroneController(object):
+	
 	def __init__(self):
 		# Holds the current drone status
 		self.status = -1
 
+		self.rotating = 0
 		# Subscribe to the /ardrone/navdata topic, of message type navdata, and call self.ReceiveNavdata when a message is received
 		self.subNavdata = rospy.Subscriber('/ardrone/navdata',Navdata,self.ReceiveNavdata) 
 		
@@ -36,6 +38,9 @@ class BasicDroneController(object):
 		self.pubLand    = rospy.Publisher('/ardrone/land',Empty)
 		self.pubTakeoff = rospy.Publisher('/ardrone/takeoff',Empty)
 		self.pubReset   = rospy.Publisher('/ardrone/reset',Empty)
+		
+		rospy.wait_for_service('/ardrone/setflightanimation');
+		#self.animSrv = rospy.Publisher('/ardrone/setflightanimation',Empty)
 		
 		# Allow the controller to publish to the /cmd_vel topic and thus control the drone
 		self.pubCommand = rospy.Publisher('/cmd_vel',Twist)
@@ -66,6 +71,16 @@ class BasicDroneController(object):
 		# Send an emergency (or reset) message to the ardrone driver
 		self.pubReset.publish(Empty())
 
+	def StartRotating(self):
+		try:
+			turn_around = rospy.ServiceProxy('/ardrone/setflightanimation', FlightAnim)
+			resp1 = turn_around(13, 0)
+			print "service called!"
+			print resp1
+		except rospy.ServiceException, e:
+			print "Service call failed: %s"%e
+
+			
 	def SetCommand(self,roll=0,pitch=0,yaw_velocity=0,z_velocity=0):
 		# Called by the main program to set the current command
 		self.command.linear.x  = pitch

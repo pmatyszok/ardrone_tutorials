@@ -36,8 +36,14 @@ ScalePitch      = 1.0
 ScaleYaw        = 1.0
 ScaleZ          = 1.0
 
+# special custom actions
+TurnAround		= 3
+StopTurn		= 4
+Rotating 		= 0
+
 # handles the reception of joystick packets
 def ReceiveJoystickMessage(data):
+	global Rotating
 	if data.buttons[ButtonEmergency]==1:
 		rospy.loginfo("Emergency Button Pressed")
 		controller.SendEmergency()
@@ -47,6 +53,9 @@ def ReceiveJoystickMessage(data):
 	elif data.buttons[ButtonTakeoff]==1:
 		rospy.loginfo("Takeoff Button Pressed")
 		controller.SendTakeoff()
+	elif data.buttons[TurnAround]==1:
+		rospy.loginfo("Engage autonomous room scanning")
+		controller.StartRotating()
 	else:
 		controller.SetCommand(data.axes[AxisRoll]/ScaleRoll,data.axes[AxisPitch]/ScalePitch,data.axes[AxisYaw]/ScaleYaw,data.axes[AxisZ]/ScaleZ)
 
@@ -70,6 +79,8 @@ if __name__=='__main__':
 	ScaleYaw        = float ( rospy.get_param("~ScaleYaw",ScaleYaw) )
 	ScaleZ          = float ( rospy.get_param("~ScaleZ",ScaleZ) )
 
+	TurnAround		= int	( rospy.get_param("~TurnAround", TurnAround) )
+	Rotating 		= 0
 	# Now we construct our Qt Application and associated controllers and windows
 	app = QtGui.QApplication(sys.argv)
 	display = DroneVideoDisplay()
