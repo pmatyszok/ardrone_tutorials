@@ -1,0 +1,10 @@
+Wgrać na router plik conf.bin z pulpitu;
+w tej chwili joystick_controller.launch ma wymuszony adres 192.168.1.1
+na dronie wprowadzić następujące ustawienia (one liner):
+iwconfig ath0 mode managed essid HF; ifconfig ath0 192.168.1.1 netmask 255.255.255.0 up; route add default gw 192.168.1.254
+
+ewentualnie odpal skrypt:
+echo "./data/wifi.sh" | telnet 192.168.1.1
+
+#!/bin/bash
+echo "./data/wifi.sh" | telnet 192.168.1.1
