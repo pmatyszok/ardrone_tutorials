@@ -18,7 +18,7 @@ from ardrone_autonomy.msg import Navdata # for receiving navdata feedback
 from ardrone_autonomy.srv import FlightAnim
 # An enumeration of Drone Statuses
 from drone_status import DroneStatus
-
+from time import sleep
 
 # Some Constants
 COMMAND_PERIOD = 100 #ms
@@ -71,12 +71,17 @@ class BasicDroneController(object):
 		# Send an emergency (or reset) message to the ardrone driver
 		self.pubReset.publish(Empty())
 
+	def DoRotate(self, count):
+		turn_around = rospy.ServiceProxy('/ardrone/setflightanimation', FlightAnim)
+		for x in range(0,count-1):
+			resp1 = turn_around(6, 100)
+			sleep(0.8)
+			print resp1
+
 	def StartRotating(self):
 		try:
-			turn_around = rospy.ServiceProxy('/ardrone/setflightanimation', FlightAnim)
-			resp1 = turn_around(13, 0)
 			print "service called!"
-			print resp1
+			self.DoRotate(10)			
 		except rospy.ServiceException, e:
 			print "Service call failed: %s"%e
 

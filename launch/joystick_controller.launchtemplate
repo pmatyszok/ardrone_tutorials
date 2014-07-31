@@ -18,21 +18,21 @@
 	</node>
 
 	<node name="joy_node" pkg="joy" type="joy_node" output="screen" clear_params="true">
-		<param name="dev" type="str" value="/dev/input/js<YOUR JOYSTICK DEVICE>"/>
+		<param name="dev" type="str" value="/dev/input/js0"/>
 	</node>
 	
 	<!-- Launches the joystick controller -->
 	<node name="joystick_controller" pkg="ardrone_tutorials" type="joystick_controller.py" output="screen" required="true">
 		<!-- Configures the joystick button mapping -->
-		<param name="ButtonEmergency"	value="<YOUR MAPPING eg 0>" />
-		<param name="ButtonLand"		value="<YOUR MAPPING eg 1>" />
-		<param name="ButtonTakeoff"		value="<YOUR MAPPING eg 2>" />
+		<param name="ButtonEmergency"	value="9" />
+		<param name="ButtonLand"		value="6" />
+		<param name="ButtonTakeoff"		value="7" />
 
 		<!-- Configures the joystick axis mapping -->
-		<param name="AxisRoll"			value="<YOUR MAPPING eg 0>" />
-		<param name="AxisPitch"			value="<YOUR MAPPING eg 1>" />
-		<param name="AxisYaw"			value="<YOUR MAPPING eg 2>" />
-		<param name="AxisZ"				value="<YOUR MAPPING eg 3>" />
+		<param name="AxisRoll"			value="0" />
+		<param name="AxisPitch"			value="1" />
+		<param name="AxisYaw"			value="2" />
+		<param name="AxisZ"				value="3" />
 
 		<!-- Configures the joystick mapping -->
 		<param name="ScaleRoll"			value="1" />
