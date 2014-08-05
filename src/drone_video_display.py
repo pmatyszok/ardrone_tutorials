@@ -99,6 +99,7 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 			try:			
 					# Convert the ROS image into a QImage which we can display
 					image = QtGui.QPixmap.fromImage(QtGui.QImage(self.image.data, self.image.width, self.image.height, QtGui.QImage.Format_RGB888))
+					
 					if len(self.tags) > 0:
 						self.tagLock.acquire()
 						try:

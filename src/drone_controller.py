@@ -10,16 +10,23 @@
 # Import the ROS libraries, and load the manifest file which through <depend package=... /> will give us access to the project dependencies
 import roslib; roslib.load_manifest('ardrone_tutorials')
 import rospy
+import time
 
 # Import the messages we're interested in sending and receiving
 from geometry_msgs.msg import Twist  	 # for sending commands to the drone
 from std_msgs.msg import Empty       	 # for land/takeoff/emergency
 from ardrone_autonomy.msg import Navdata # for receiving navdata feedback
+from sensor_msgs.msg import Image    	 # for receiving the video feed
 from ardrone_autonomy.srv import FlightAnim
 # An enumeration of Drone Statuses
 from drone_status import DroneStatus
 from time import sleep
+#for QImage class
 
+from PySide import QtCore, QtGui
+
+import cv
+from cv_bridge import CvBridge, CvBridgeError
 # Some Constants
 COMMAND_PERIOD = 100 #ms
 
@@ -51,6 +58,21 @@ class BasicDroneController(object):
 
 		# Land the drone if we are shutting down
 		rospy.on_shutdown(self.SendLand)
+		
+		self.doTakeImage = False
+		self.imageSource = rospy.Subscriber('/ardrone/image_raw',Image,self.ReceiveImage)
+		self.inspectionCounter = 0
+		self.image = None
+		self.bridge = CvBridge()
+	
+	def ReceiveImage(self, data):
+		if self.doTakeImage == True :
+			self.doTakeImage = False
+			self.image = self.bridge.imgmsg_to_cv(data, "bgr8")
+			fileName = "/home/pawel/inspections/inspection" + str(self.inspectionCounter) + "_" + time.strftime("%m%d-%H%M%S") + ".png"
+			print fileName
+			cv.SaveImage(fileName, self.image)
+			
 
 	def ReceiveNavdata(self,navdata):
 		# Although there is a lot of data in this packet, we're only interested in the state at the moment	
@@ -74,14 +96,16 @@ class BasicDroneController(object):
 	def DoRotate(self, count):
 		turn_around = rospy.ServiceProxy('/ardrone/setflightanimation', FlightAnim)
 		for x in range(0,count-1):
+			self.doTakeImage = True
 			resp1 = turn_around(6, 100)
-			sleep(0.8)
+			sleep(1.2)
 			print resp1
 
 	def StartRotating(self):
 		try:
 			print "service called!"
-			self.DoRotate(10)			
+			self.DoRotate(10)		
+			self.inspectionCounter = self.inspectionCounter + 1
 		except rospy.ServiceException, e:
 			print "Service call failed: %s"%e
 
