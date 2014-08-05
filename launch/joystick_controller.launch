@@ -19,6 +19,7 @@
 
 	<node name="joy_node" pkg="joy" type="joy_node" output="screen" clear_params="true">
 		<param name="dev" type="str" value="/dev/input/js0"/>
+		
 	</node>
 	
 	<!-- Launches the joystick controller -->
@@ -27,7 +28,8 @@
 		<param name="ButtonEmergency"	value="9" />
 		<param name="ButtonLand"		value="7" />
 		<param name="ButtonTakeoff"		value="6" />
-
+		<param name="TurnAround"		value="3" />
+		
 		<!-- Configures the joystick axis mapping -->
 		<param name="AxisRoll"			value="0" />
 		<param name="AxisPitch"			value="1" />
