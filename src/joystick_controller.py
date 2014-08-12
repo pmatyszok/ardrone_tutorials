@@ -30,6 +30,11 @@ AxisPitch       = 1
 AxisYaw         = 3
 AxisZ           = 4
 
+AxisZDown		= 2
+AxisZUp			= 5
+YawLeft			= 11
+YawRight 		= 12
+
 # define the default scaling to apply to the axis inputs. useful where an axis is inverted
 ScaleRoll       = 1.0
 ScalePitch      = 1.0
@@ -40,10 +45,13 @@ ScaleZ          = 1.0
 TurnAround		= 3
 StopTurn		= 4
 Rotating 		= 0
+ChangeScale		= 2
 
 # handles the reception of joystick packets
 def ReceiveJoystickMessage(data):
 	global Rotating
+	global ScaleRoll
+	global ScalePitch, ScaleYaw, ScaleZ
 	if data.buttons[ButtonEmergency]==1:
 		rospy.loginfo("Emergency Button Pressed")
 		controller.SendEmergency()
@@ -56,8 +64,20 @@ def ReceiveJoystickMessage(data):
 	elif data.buttons[TurnAround]==1:
 		rospy.loginfo("Engage autonomous room scanning")
 		controller.StartRotating()
+	elif data.buttons[ChangeScale]==1:
+		if ScaleRoll == 1.0:
+			ScaleRoll = 2.0
+			ScalePitch = 2.0
+			ScaleYaw = 2.0
+			ScaleZ = 2.0
+		else:
+			ScaleRoll = 1.0
+			ScalePitch = 1.0
+			ScaleYaw = 1.0
+			ScaleZ = 1.0
+		rospy.loginfo("Current Scale Set To " + str(ScaleRoll))
 	else:
-		controller.SetCommand(data.axes[AxisRoll]/ScaleRoll,data.axes[AxisPitch]/ScalePitch,data.axes[AxisYaw]/ScaleYaw,data.axes[AxisZ]/ScaleZ)
+		controller.SetCommand(data.axes[AxisRoll]/ScaleRoll,data.axes[AxisPitch]/ScalePitch,data.buttons[YawLeft]/ScaleYaw,data.buttons[YawRight]/ScaleYaw,data.axes[AxisZUp],data.axes[AxisZDown])
 
 
 # Setup the application
@@ -79,7 +99,14 @@ if __name__=='__main__':
 	ScaleYaw        = float ( rospy.get_param("~ScaleYaw",ScaleYaw) )
 	ScaleZ          = float ( rospy.get_param("~ScaleZ",ScaleZ) )
 
+	AxisZDown		= int ( rospy.get_param("~AxisZDown",AxisZDown) )
+	AxisZUp			= int ( rospy.get_param("~AxisZUp",AxisZUp) )
+	
+	YawLeft		= int ( rospy.get_param("~YawLeft",YawLeft) )
+	YawRight	= int ( rospy.get_param("~YawRight",YawRight) )
+	
 	TurnAround		= int	( rospy.get_param("~TurnAround", TurnAround) )
+	ChangeScale		= int   (rospy.get_param("~ChangeScale", ChangeScale) )
 	Rotating 		= 0
 	# Now we construct our Qt Application and associated controllers and windows
 	app = QtGui.QApplication(sys.argv)

@@ -93,28 +93,33 @@ class BasicDroneController(object):
 		# Send an emergency (or reset) message to the ardrone driver
 		self.pubReset.publish(Empty())
 
-	def DoRotate(self, count):
-		turn_around = rospy.ServiceProxy('/ardrone/setflightanimation', FlightAnim)
-		for x in range(0,count-1):
-			self.doTakeImage = True
-			resp1 = turn_around(6, 100)
-			sleep(1.2)
-			print resp1
 
 	def StartRotating(self):
 		try:
-			print "service called!"
-			self.DoRotate(10)		
 			self.inspectionCounter = self.inspectionCounter + 1
+			self.doTakeImage = True
+			sleep(0.05)
 		except rospy.ServiceException, e:
-			print "Service call failed: %s"%e
+			print "taking print-screen failed: %s"%e
 
 			
-	def SetCommand(self,roll=0,pitch=0,yaw_velocity=0,z_velocity=0):
+	def SetCommand(self,roll=0,pitch=0,yaw_left=0,yaw_right=0,z_velocity_up=0, z_velocity_down=0):
 		# Called by the main program to set the current command
 		self.command.linear.x  = pitch
 		self.command.linear.y  = roll
+		z_velocity = 0;
+		if z_velocity_up != 1.0:
+			z_velocity = -(z_velocity_up)/2 + 0.5
+		elif z_velocity_down != 1.0:
+			z_velocity = -(-(z_velocity_down)/2 + 0.5)
 		self.command.linear.z  = z_velocity
+		print z_velocity
+		yaw_velocity = 0
+		if yaw_left != 0:
+			yaw_velocity = 1.0
+		elif yaw_right != 0:
+			yaw_velocity = -1.0
+		print yaw_velocity
 		self.command.angular.z = yaw_velocity
 
 	def SendCommand(self,event):

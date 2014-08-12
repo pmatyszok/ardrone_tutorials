@@ -1,14 +1,14 @@
 <launch>
 	<!-- Launches the AR.Drone driver -->
 	<node name="ardrone_driver" pkg="ardrone_autonomy" type="ardrone_driver" output="screen" clear_params="true" args="-ip 192.168.1.100">
-	    <param name="outdoor" value="0" />				<!-- If we are flying outdoors, will select more aggressive default settings -->
+	    <param name="outdoor" value="1" />				<!-- If we are flying outdoors, will select more aggressive default settings -->
 	    <param name="flight_without_shell" value="0" /> <!-- Changes internal controller gains if we are flying without the propeller guard -->
 	   
-	    <param name="altitude_max" value="3000" />		<!-- in millimeters = 3 meters = 9' -->
-        <param name="altitude_min" value="50" />		<!-- in millimeters = 5cm = 2" -->
-        <param name="euler_angle_max" value="0.1" />	<!-- maximum allowable body angle in radians = 5 degrees -->
-        <param name="control_vz_max" value="200" />		<!-- maximum z velocity in mm/sec = 0.2m/sec -->
-	    <param name="control_yaw" value="0.7" />		<!-- maximum rotation rate in radians/sec = 40 degrees per second (1/9 rev/sec) -->
+	    <param name="altitude_max" value="5000" />		<!-- in millimeters = 3 meters = 9' -->
+        <param name="altitude_min" value="100" />		<!-- in millimeters = 5cm = 2" -->
+        <param name="euler_angle_max" value="0.15" />	<!-- maximum allowable body angle in radians = 5 degrees -->
+        <param name="control_vz_max" value="500" />		<!-- maximum z velocity in mm/sec = 0.2m/sec -->
+	    <param name="control_yaw" value="1.75" />		<!-- maximum rotation rate in radians/sec = 40 degrees per second (1/9 rev/sec) -->
 
 	    <param name="detect_type" value="10" />
 	    <param name="detections_select_h" value="32" />	<!-- In the horizontal camera, look for the orange-blue-orange markers -->
@@ -19,7 +19,7 @@
 
 	<node name="joy_node" pkg="joy" type="joy_node" output="screen" clear_params="true">
 		<param name="dev" type="str" value="/dev/input/js0"/>
-		<param name="deadzone" value="0.12" />
+		<param name="deadzone" value="0.05" />
 	</node>
 	
 	<!-- Launches the joystick controller -->
@@ -31,11 +31,19 @@
 		<param name="TurnAround"		value="3" />
 
 		<!-- Configures the joystick axis mapping -->
-		<param name="AxisRoll"			value="0" />
+		<param name="AxisRoll"			value="3" />
 		<param name="AxisPitch"			value="1" />
 		<param name="AxisYaw"			value="4" />
 		<param name="AxisZ"				value="5" />
 
+		<param name="AxisZDown"				value="5" />
+		<param name="AxisZUp"				value="2" />
+
+		<param name="YawLeft"				value="11" />
+		<param name="YawRight"				value="12" />
+		
+		<param name="ChangeScale"		value="2" />
+		
 		<!-- Configures the joystick mapping -->
 		<param name="ScaleRoll"			value="1" />
 		<param name="ScalePitch"		value="1" />
