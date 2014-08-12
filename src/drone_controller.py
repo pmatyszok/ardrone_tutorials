@@ -46,7 +46,7 @@ class BasicDroneController(object):
 		self.pubTakeoff = rospy.Publisher('/ardrone/takeoff',Empty)
 		self.pubReset   = rospy.Publisher('/ardrone/reset',Empty)
 		
-		rospy.wait_for_service('/ardrone/setflightanimation');
+		#rospy.wait_for_service('/ardrone/setflightanimation');
 		#self.animSrv = rospy.Publisher('/ardrone/setflightanimation',Empty)
 		
 		# Allow the controller to publish to the /cmd_vel topic and thus control the drone
